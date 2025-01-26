@@ -3,25 +3,19 @@ package com.sdlcpro.sdlcprospringjpaapp.entities;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
 
 @Entity
+@Setter
+@Getter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@Setter
-@Getter
-public class Student {
+public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    private String email;
-    private Integer age;
-    private String addressName;
-    @Version
-    private Long version;
-    @ManyToOne
-    private Address address;
-
-
+    @OneToMany(mappedBy = "address")
+    private List<Student> student;
 }
