@@ -28,19 +28,6 @@ public class StudentService {
 
     public Student getStudentBynameId(Integer id, String name)
     {
-//    var stream =  studentRepo.findAllByName("abdullah") ;
-//    stream.skip(1000).limit(10)
-//            .forEach(System.out::println);
-
-        for(int i=0;i<100;i++)
-        {
-            var p = new Student();
-            p.setName(UUID.randomUUID().toString());
-            p.setAge((int) (Math.random()*1000));
-            p.setAddress(new Address());
-            studentRepo.save(p);
-        }
-
         return studentRepo.getStudent(id,name);
     }
 
