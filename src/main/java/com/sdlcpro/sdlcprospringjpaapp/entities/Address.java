@@ -16,6 +16,6 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
     private String name;
-    @OneToMany(mappedBy = "address")
-    private List<Student> student;
+
+
 }

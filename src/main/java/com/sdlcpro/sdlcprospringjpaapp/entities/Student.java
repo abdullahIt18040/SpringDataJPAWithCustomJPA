@@ -10,6 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @Setter
 @Getter
+
 public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,11 +18,8 @@ public class Student {
     private String name;
     private String email;
     private Integer age;
-    private String addressName;
-    @Version
-    private Long version;
+
     @ManyToOne
     private Address address;
-
 
 }

@@ -1,5 +1,8 @@
 package com.sdlcpro.sdlcprospringjpaapp;
 
+import com.sdlcpro.sdlcprospringjpaapp.dto.StudentDto;
+import com.sdlcpro.sdlcprospringjpaapp.dto.StudentNameAgeAddressDto;
+import com.sdlcpro.sdlcprospringjpaapp.dto.StudentNameAgeDTO;
 import com.sdlcpro.sdlcprospringjpaapp.entities.Student;
 import com.sdlcpro.sdlcprospringjpaapp.respository.StudentRepo;
 import jakarta.transaction.Transactional;
@@ -7,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
+import org.springframework.data.support.WindowIterator;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 
 @SpringBootApplication
@@ -21,24 +26,22 @@ public class SdlcprospringjpaAppApplication implements CommandLineRunner {
 
 
     }
-    @Autowired
+@Autowired
 private StudentRepo studentRepo;
-    @Transactional
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
 
-        Sort sort = Sort.by(Sort.Order.by("id"));
-        Sort.TypedSort<Student> studentTypedSort = Sort.sort(Student.class);
-          Sort sort1 = studentTypedSort.by(Student::getId).ascending();
+           var res =  studentRepo.findStudentById(1, StudentNameAgeDTO.class);
+        System.out.println(res);
 
-        Pageable pageable = PageRequest.of(2,10, sort);
-      Page<Student> studentPage =  studentRepo.findStudentsByAddressName("abdullah",pageable);
-      studentPage.getContent();
-        System.out.println(studentPage);
+         var res2 = studentRepo.findStudentById(1, StudentDto.class);
+        System.out.println(res2);
+       List<StudentDto> res3 =  studentRepo.findStudentByAddress_Name("level",StudentDto.class,Limit.of(2));
 
+        System.out.println(res3);
 
-
-
-
+        var re4 = studentRepo.findStudentById(1);
+        System.out.println("interface project"+re4.getAddress()+" name is "+re4.getName());
     }
 }

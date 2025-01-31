@@ -2,6 +2,7 @@ package com.sdlcpro.sdlcprospringjpaapp.services;
 
 import com.sdlcpro.sdlcprospringjpaapp.entities.Address;
 import com.sdlcpro.sdlcprospringjpaapp.entities.Student;
+import com.sdlcpro.sdlcprospringjpaapp.respository.AddressRepo;
 import com.sdlcpro.sdlcprospringjpaapp.respository.StudentRepo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,21 @@ import java.util.UUID;
 public class StudentService {
     @Autowired
     private StudentRepo studentRepo;
+    @Autowired
+    private AddressRepo addressRepo;
+    public String saveAddress( Address address)
+    {
+
+      Address address1 = addressRepo.save(address);
+
+        if(address1 !=null)
+        {
+            return "address Save Successfully ";
+        }
+        return "not save";
+
+    }
+
     public String saveStudent( Student student)
     {
 
