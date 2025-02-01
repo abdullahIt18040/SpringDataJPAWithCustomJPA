@@ -4,6 +4,7 @@ import com.sdlcpro.sdlcprospringjpaapp.dto.StudentDto;
 import com.sdlcpro.sdlcprospringjpaapp.dto.StudentNameAgeAddressDto;
 import com.sdlcpro.sdlcprospringjpaapp.dto.StudentNameAgeDTO;
 import com.sdlcpro.sdlcprospringjpaapp.entities.Student;
+import com.sdlcpro.sdlcprospringjpaapp.interfaceProjection.StudentNameAgeProjection;
 import com.sdlcpro.sdlcprospringjpaapp.respository.StudentRepo;
 import com.sdlcpro.sdlcprospringjpaapp.specification.StudentSpecification;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -45,8 +46,14 @@ private StudentRepo studentRepo;
                   .and(StudentSpecification.nameLike("abdullah"))
           );
 
- Page<Student> studentsPage = studentRepo.findAll(specification,PageRequest.of(0,5));
-       studentsPage.forEach(System.out::println);
+ Page<StudentNameAgeProjection> studentsPage = studentRepo.findBy(specification,
+
+         fetchableFluentQuery ->fetchableFluentQuery.as(StudentNameAgeProjection.class)
+                 .page(PageRequest.of(0,5)));
+
+
+
+       studentsPage.forEach(s-> System.out.println(s.getName()+" "+ s.getAge()+" "+"s******************"+s.getAddress()));
 
        Specification<Student> specification1 = Specification.where(
                StudentSpecification.byAgeRange(100,1000)
