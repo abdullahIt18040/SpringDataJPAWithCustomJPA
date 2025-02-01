@@ -40,12 +40,9 @@ public class StudentService {
        return "not save";
 
     }
-    @Transactional
 
-    public Student getStudentBynameId(Integer id, String name)
-    {
-        return studentRepo.getStudent(id,name);
-    }
+
+
 
 
 

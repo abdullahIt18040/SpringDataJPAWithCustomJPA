@@ -5,17 +5,21 @@ import com.sdlcpro.sdlcprospringjpaapp.dto.StudentNameAgeAddressDto;
 import com.sdlcpro.sdlcprospringjpaapp.dto.StudentNameAgeDTO;
 import com.sdlcpro.sdlcprospringjpaapp.entities.Student;
 import com.sdlcpro.sdlcprospringjpaapp.respository.StudentRepo;
+import com.sdlcpro.sdlcprospringjpaapp.specification.StudentSpecification;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.support.WindowIterator;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 @SpringBootApplication
@@ -31,17 +35,26 @@ private StudentRepo studentRepo;
     @Override
     @Transactional
     public void run(String... args) throws Exception {
+//  var student =  studentRepo.findAll((Specification<Student>) (root, query, cb) -> cb.equal(root.get("id"),1));
+//        Optional<Student> student =  studentRepo.findOne((root, query, cb) -> cb.equal(root.get("id"),1));
+//        System.out.println(student.orElseThrow(()->new RuntimeException("product not found by this id")));
 
-           var res =  studentRepo.findStudentById(1, StudentNameAgeDTO.class);
-        System.out.println(res);
+  Specification<Student> specification = Specification.
+          where(StudentSpecification.byAddressName(Set.of("floor_one","floor_two"))
+                  .and(StudentSpecification.byAgeRange(10,50))
+                  .and(StudentSpecification.nameLike("abdullah"))
+          );
 
-         var res2 = studentRepo.findStudentById(1, StudentDto.class);
-        System.out.println(res2);
-       List<StudentDto> res3 =  studentRepo.findStudentByAddress_Name("level",StudentDto.class,Limit.of(2));
+ Page<Student> studentsPage = studentRepo.findAll(specification,PageRequest.of(0,5));
+       studentsPage.forEach(System.out::println);
 
-        System.out.println(res3);
+       Specification<Student> specification1 = Specification.where(
+               StudentSpecification.byAgeRange(100,1000)
+       );
+      Page<Student> studentPage1 = studentRepo.findAll(specification1,PageRequest.of(0,5));
+      studentPage1.forEach(
+              System.out::println
+      );
 
-        var re4 = studentRepo.findStudentById(1);
-        System.out.println("interface project"+re4.getAddress()+" name is "+re4.getName());
     }
 }
