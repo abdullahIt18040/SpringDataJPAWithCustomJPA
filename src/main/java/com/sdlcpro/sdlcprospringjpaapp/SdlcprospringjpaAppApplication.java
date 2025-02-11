@@ -23,11 +23,12 @@ import org.springframework.data.repository.query.QueryByExampleExecutor;
 import org.springframework.data.support.WindowIterator;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.*;
-
+@EnableAsync
 
 @SpringBootApplication
 public class SdlcprospringjpaAppApplication implements CommandLineRunner  {
@@ -37,28 +38,14 @@ public class SdlcprospringjpaAppApplication implements CommandLineRunner  {
     public static void main(String[] args) {
         SpringApplication.run(SdlcprospringjpaAppApplication.class, args);
     }
-@Autowired
-    private AppUserRepository appUserRepository;
-    @Autowired
-    private TemplateEngine templateEngine;
 
-    @Autowired
-    private JavaMailSender mailSender;
-
-    @Autowired
-    private OrderItemsRepository orderItemsRepository;
-    @Autowired
-    private AppUserOrderRepository appUserOrderRepository;
     @Override
     public void run(String... args) throws Exception {
 
 
 
-      var order =  appUserOrderRepository.findByIdAndUser(1,new AppUser(1));
-        System.out.println(order);
 
-        var invoice = buildInvoice(order);
-sendInvoiceMailTo(invoice);
+//sendInvoiceMailTo(invoice);
 
 
 
@@ -72,49 +59,7 @@ sendInvoiceMailTo(invoice);
 //appUserOrderRepository.save(order);
     }
 
-    private InvoiceInfo buildInvoice(AppUserOrders order)
-    {
-        var user = order.getUser();
-        var invoiceItems =  order.getOrderItems().stream().map(i->
-                new InvoiceDesItem(i.getProduct().getName(),
-                        i.getQuantity(), i.getProduct().getPrice(),
-                        i.getProduct().getPrice()* i.getQuantity() )
-
-                ).toList();
-
-        var total = invoiceItems.stream().map(InvoiceDesItem::amount).reduce(0.0,Double::sum);
-
-        var context = new Context();
-        context.setVariable("invoiceNumber",order.getId());
-        context.setVariable("companyName",user.getName());
-        context.setVariable("companyAddress",user.getAddress());
-        context.setVariable("companyEmail",user.getEmail());
-        context.setVariable("clientName","it22606@gmail.com");
-        context.setVariable("clientAddress","dhaka");
-        context.setVariable("clientEmail","tarek@gmail.com");
-        context.setVariable("items",invoiceItems);
-        context.setVariable("total",total);
 
 
-        var content = templateEngine.process("invoice",context);
-
-        return new InvoiceInfo(content, user.getEmail());
-
-    }
-    private void sendInvoiceMailTo(InvoiceInfo invoiceInfo)
-    {try {
-
-
-        var mimeMessage = mailSender.createMimeMessage();
-        var helper = new MimeMessageHelper(mimeMessage);
-        helper.setFrom("techmammon@gmail.com");
-        helper.setTo(invoiceInfo.mailTo());
-        helper.setText(invoiceInfo.content(),true);
-        mailSender.send(mimeMessage);
-    } catch (Exception exception)
-    {
-        throw  new RuntimeException("mail not send ",exception);
-    }
-    }
 
 }
